@@ -1,0 +1,16 @@
+{
+  "name": "verify-diff-dev",
+  "version": "1.0.0",
+  "description": "Minimal GitHub webhook server to verify signatures and fetch commit diffs",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@octokit/app": "^15.1.3",
+    "@octokit/rest": "^21.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
