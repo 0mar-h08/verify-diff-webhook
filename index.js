@@ -136,43 +136,6 @@ async function handlePushEvent(payload) {
         console.error('Error calling Groq API:', error);
         reviewText = `Review unavailable: ${error.message}`;
       }
-
-      // Send review to Telegram
-      try {
-        const header = `${repoFullName} - ${commitMessage}\n\n`;
-        let messageText = `${header}${reviewText}`;
-        const MAX_TELEGRAM_LENGTH = 4096;
-
-        if (messageText.length > MAX_TELEGRAM_LENGTH) {
-          const note = '\n\n[Review truncated due to Telegram message length limit]';
-          const allowedLength = MAX_TELEGRAM_LENGTH - header.length - note.length;
-          messageText = `${header}${reviewText.slice(0, Math.max(0, allowedLength))}${note}`;
-        }
-
-        const telegramResponse = await fetch(
-          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              chat_id: process.env.TELEGRAM_CHAT_ID,
-              text: messageText,
-            }),
-          }
-        );
-
-        if (!telegramResponse.ok) {
-          const errBody = await telegramResponse.text().catch(() => '');
-          console.error(`Telegram send failed (status ${telegramResponse.status}):`, errBody);
-        } else {
-          console.log('Successfully sent review to Telegram.');
-        }
-      } catch (telegramError) {
-        console.error('Error sending review to Telegram:', telegramError);
-      }
-
       console.log('========================================');
       console.log(`Repository: ${repoFullName}`);
       console.log(`Commit SHA: ${sha}`);
